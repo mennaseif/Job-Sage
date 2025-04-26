@@ -1,0 +1,44 @@
+JOBSAGE/
+│
+├── database/
+│   └── dbConnection.js         # Handles the MongoDB connection setup using Mongoose
+│
+├── models/
+│   └── user.models.js          # Defines the user schema with fields such as name, email, password, and phone number
+│
+├── node_modules/              # Contains all installed Node.js packages (auto-generated)
+│
+├── src/
+│   ├── email/
+│   │   ├── email.Html.js       # Generates the HTML structure for emails (e.g., OTPs or notifications)
+│   │   └── email.js            # Configures and sends emails using Nodemailer
+│   
+│   
+│   ├── middleware/
+│   │   ├── catchError.js       # Catches and forwards async errors to the global error handler
+│   │   ├── checkEmail.js       # Middleware to check if a user's email already exists
+│   │   ├── globalError.js      # Global error handler for unified error responses
+│   │   └── verifyToken.js      # Middleware to verify JWT tokens for protected routes
+│   │   └── validate.js      # Middleware to sort the body
+│   │
+│   └── modules/
+│       ├── auth/
+│       │   └── auth.controller.js   # Contains authentication logic such as login and register
+│       │
+│       └── user/
+│           ├── user.controller.js  # Contains user-related logic such as update account or delete account
+│           ├── user.routes.js      # Maps HTTP routes to controller functions for users
+│           └── user.validation.js  # Defines Joi schemas to validate user inputs
+│
+├── bootstrap.js                 # Initializes core services, database, and server
+│
+├── utils/
+│   ├── appError.js              # Custom error class for consistent error messages
+│
+├── .env                         # Environment variables like DB URI, JWT secrets, email credentials
+├── .gitignore                   # Specifies files/folders to ignore in version control
+├── DSS                          # System design documentation
+├── index.js                     # Main entry point to start the application
+├── package-lock.json            # Auto-generated file locking dependencies
+├── package.json                 # Defines project metadata and dependencies
+└── README.md                    # Project overview and developer guidelines

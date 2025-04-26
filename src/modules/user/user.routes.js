@@ -1,7 +1,6 @@
 import {
   changeUserPassword,
   deleteAccount,
-  getAccountByRecoveryEmail,
   getUser,
   requestPasswordReset,
   resetPassword,
@@ -30,20 +29,10 @@ userRoutes.post("/reqest-password-reset", requestPasswordReset);
 userRoutes.post("/verifyotp", verifyOTP);
 userRoutes.post("/reset-password", resetPassword);
 
-userRoutes.get("/getaccount", protectedRoutes, getAccountByRecoveryEmail);
-userRoutes.put(
-  "/update",
-  validate(updateUserValidSchema),
-  protectedRoutes,
-  updateAccount
-);
+
+userRoutes.put( "/update",validate(updateUserValidSchema),protectedRoutes,updateAccount);
 userRoutes.delete("/deleteAccount", protectedRoutes, deleteAccount);
 userRoutes.get("/getuser", protectedRoutes, getUser);
-userRoutes.patch(
-  "/change-password",
-  validate(changeUserPasswordValidSchema),
-  protectedRoutes,
-  changeUserPassword
-);
+userRoutes.patch("/change-password",validate(changeUserPasswordValidSchema),protectedRoutes,changeUserPassword);
 
 export default userRoutes;

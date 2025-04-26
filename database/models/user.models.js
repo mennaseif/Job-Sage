@@ -18,7 +18,6 @@ let userSchema = new Schema(
       required: true,
       minlength: [6, "password should be more than 6"],
     },
-    recoveryEmail: String,
     passwordChangedAt: Date,
     mobileNumber: {
       type: Number,
@@ -47,19 +46,5 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-/*userSchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    const userId = this.getQuery()["_id"];
-    await Application.deleteMany({ userId: userId })
-      .then(() => {
-        next();
-      })
-      .catch((err) => {
-        return next(new AppError("Failed to delete related applications", 500));
-      });
-  }
-);*/
 
 export const User = mongoose.model("User", userSchema);

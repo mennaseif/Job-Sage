@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken";
 import { AppError } from "../../../utils/appError.js";
-import { catchError } from "../../middleware/catcherror.js";
 import { User } from "../../../database/models/user.models.js";
+import { catchError } from "../../middleware/catcherror.js";
+import jwt from "jsonwebtoken";
 
 /**
  * Middleware to protect routes by verifying JWT and attaching the user to the request.
@@ -19,7 +19,8 @@ const protectedRoutes = catchError(async (req, res, next) => {
   if (!token) return next(new AppError("token not provided", 401));
 
   // Verify the token using the secret key
-  jwt.verify(token, "menna", (err, payload) => {
+  jwt.verify(token,process.env.JWT_KEY_SIGN_TOKEN
+    , (err, payload) => {
     if (err) return next(new AppError("Invalid token", 401));
 
     // Check if the payload contains the user ID

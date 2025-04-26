@@ -5,7 +5,6 @@ import { User } from "../../../database/models/user.models.js";
 import bcrypt from "bcrypt";
 import { catchError } from "../../middleware/catcherror.js";
 import crypto from "crypto";
-import { deleteOne } from "../../handlers/handlers.js";
 import jwt from "jsonwebtoken";
 
 /**
@@ -43,11 +42,10 @@ const signUp = catchError(async (req, res, next) => {
  * @access Public
  */
 const signIn = catchError(async (req, res, next) => {
-  // Find user by email, recovery email, or mobile number
+  // Find user by email or mobile number
   let user = await User.findOne({
     $or: [
       { email: req.body.loginData },
-      { recoveryEmail: req.body.loginData },
       { mobileNumber: req.body.loginData },
     ],
   });
@@ -79,7 +77,7 @@ const signIn = catchError(async (req, res, next) => {
       res.status(200).json({
         message: "Login successful",
         token,
-        email: user.email, // Include email
+        email: user.email,
       });
     }
   );
@@ -92,14 +90,13 @@ const signIn = catchError(async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express middleware function
- * @route PATCH /api/users/update/:id
+ * @route PATCH /api/users/updateAccount
  * @access Private
  */
 const updateAccount = catchError(async (req, res, next) => {
   const {
     email,
     mobileNumber,
-    recoveryEmail,
     DateofBirth,
     lastName,
     firstName,
@@ -127,7 +124,6 @@ const updateAccount = catchError(async (req, res, next) => {
   }
 
   // Update additional user fields
-  if (recoveryEmail) user.recoveryEmail = recoveryEmail;
   if (DateofBirth) user.DateofBirth = DateofBirth;
   if (lastName) user.lastName = lastName;
   if (firstName) user.firstName = firstName;
@@ -143,31 +139,36 @@ const updateAccount = catchError(async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express middleware function
- * @route DELETE /api/users/delete/:id
+ * @route DELETE /api/users/deleteAccount
  * @access Private
  */
-const deleteAccount = deleteOne(User);
+ const deleteAccount = (model) => {
+  return catchError(async (req, res, next) => {
+    let document = await model.deleteOne();
+    document || next(new AppError("Document is not found", 404));
+    !document || res.status(200).json({ message: "Success", document });
+  });
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @description Get user by ID
+ * @description Get user by token
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express middleware function
- * @route GET /api/users/getuser/:id
+ * @route GET /api/users/getuser
  * @access Private
  */
 const getUser = catchError(async (req, res, next) => {
-  if (req.user._id.toString() !== req.params.id)
-    return next(
-      new AppError("You are not authorized to access this account", 403)
-    );
-  let user = await User.findOne();
+  // Find the user based on the token's user ID (req.user._id)
+  const user = await User.findById(req.user._id);
+  
   if (!user) return next(new AppError("User not found", 404));
 
   // Respond with the user data
   res.status(200).json({ message: "Success", user });
 });
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -175,7 +176,7 @@ const getUser = catchError(async (req, res, next) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express middleware function
- * @route PATCH /api/users/change-password/:id
+ * @route PATCH /api/users/change-password
  * @access Private
  */
 const changeUserPassword = catchError(async (req, res, next) => {
@@ -294,7 +295,7 @@ const resetPassword = catchError(async (req, res, next) => {
     return res.status(400).json({ message: "Invalid or expired token" });
   }
 
-  const user = await User.findById(decoded._id); // 👉 FIXED HERE
+  const user = await User.findById(decoded._id);
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -309,37 +310,7 @@ const resetPassword = catchError(async (req, res, next) => {
   res.status(200).json({ message: "Password has been reset successfully" });
 });
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @description Get user account by recovery email
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express middleware function
- * @route GET /api/users/getaccount
- * @access Public
- */
-const getAccountByRecoveryEmail = catchError(async (req, res, next) => {
-  // // Find account by email
-  let account = await User.find({ recoveryEmail: req.body.recoveryEmail });
-  if (account.length == 0)
-    return next(new AppError("no accounts with this recovery email", 404));
-  // Respond with a success message
-  res.status(200).json({ message: "account retrieved successfully", account });
-});
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @description User logout controller
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express middleware function
- * @route PATCH /api/users/signout/:id
- * @access Private
- */
-
-
 export {
   signUp,
   signIn,
@@ -350,5 +321,4 @@ export {
   requestPasswordReset,
   verifyOTP,
   resetPassword,
-  getAccountByRecoveryEmail,
 };
