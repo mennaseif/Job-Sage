@@ -27,7 +27,6 @@ let userSchema = new Schema(
     userType: {
       type: String,
       enum: ["Graduated", "Student"],
-      required: [true, "userType is required"],
     },
     
     status: {

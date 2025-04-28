@@ -24,7 +24,7 @@ bootstrap(app);
 app.get("/verify/:token", async (req, res, next) => {
   jwt.verify(
     req.params.token,
-    process.env.JWT_KEY_EMAIL_TOKEN,
+    "menna",
     async (err, payload) => {
       if (err) return next(new AppError(err, 401));
       await User.findOneAndUpdate(
