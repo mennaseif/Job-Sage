@@ -1,4 +1,5 @@
 import {
+  changeUserName,
   changeUserPassword,
   deleteAccount,
   getUser,
@@ -34,5 +35,6 @@ userRoutes.put( "/update",validate(updateUserValidSchema),protectedRoutes,update
 userRoutes.delete("/deleteAccount", protectedRoutes, deleteAccount);
 userRoutes.get("/getuser", protectedRoutes, getUser);
 userRoutes.patch("/change-password",validate(changeUserPasswordValidSchema),protectedRoutes,changeUserPassword);
+userRoutes.patch("/changeName",protectedRoutes,changeUserName)
 
 export default userRoutes;

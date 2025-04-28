@@ -24,7 +24,7 @@ const signUp = catchError(async (req, res, next) => {
 
   // Generate a JWT token for the user
   let token = jwt.sign(
-    { userId: user._id, role: user.role },
+    { userId: user._id, name: user.name, role: user.role },
     process.env.JWT_KEY_SIGN_TOKEN
   );
 
@@ -45,8 +45,8 @@ const signIn = catchError(async (req, res, next) => {
   // Find user by email or mobile number
   let user = await User.findOne({
     $or: [
-      { email: req.body.loginData },
-      { mobileNumber: req.body.loginData },
+      { email: req.body.email },
+      { mobileNumber: req.body.mobileNumber},
     ],
   });
 
@@ -67,7 +67,7 @@ const signIn = catchError(async (req, res, next) => {
 
   // Generate JWT
   jwt.sign(
-    { _id: user._id, name: user.name, role: user.role },
+    { userId: user._id, name: user.name, role: user.role },
     process.env.JWT_KEY_SIGN_TOKEN,
     (err, token) => {
       if (err) {
@@ -310,6 +310,29 @@ const resetPassword = catchError(async (req, res, next) => {
   res.status(200).json({ message: "Password has been reset successfully" });
 });
 
+
+/**
+ * @description Change user's full name
+ * @route PATCH /api/users/change-name
+ * @access Private (requires token)
+ */
+const changeUserName = catchError(async (req, res, next) => {
+  const { fullName } = req.body;
+
+  // Check if fullName is provided
+  if (!fullName) {
+    return next(new AppError("Full name is required", 400));
+  }
+
+  // Update user's full name
+  req.user.fullName = fullName;
+  await req.user.save();
+
+  res.status(200).json({
+    message: "Full name updated successfully",fullName
+  });
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 export {
   signUp,
@@ -321,4 +344,5 @@ export {
   requestPasswordReset,
   verifyOTP,
   resetPassword,
+  changeUserName
 };

@@ -24,7 +24,7 @@ const protectedRoutes = catchError(async (req, res, next) => {
     if (err) return next(new AppError("Invalid token", 401));
 
     // Check if the payload contains the user ID
-    if (!payload || !payload._id)
+    if (!payload || !payload.userId)
       return next(new AppError("Invalid token payload", 401));
 
     userPayload = payload;
@@ -34,10 +34,10 @@ const protectedRoutes = catchError(async (req, res, next) => {
   if (!userPayload) return next(new AppError("Invalid token payload", 401));
 
   // Fetch user by ID from the database
-  let user = await User.findById(userPayload._id);
+  let user = await User.findById(userPayload.userId);
   if (!user)
     return next(
-      new AppError("User not found with ID: " + userPayload._id, 404)
+      new AppError("User not found with ID: " + userPayload.userId, 404)
     );
 
   // Check if the user's password has changed after the token was issued
