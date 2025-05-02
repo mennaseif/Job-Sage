@@ -29,7 +29,7 @@ const signUp = catchError(async (req, res, next) => {
   );
 
   // Respond with a success message and the generated token
-  res.status(201).json({ message: "User registered successfully", token});
+  res.status(201).json({ message: "User registered successfully", token, fullName: user.fullName});
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,8 +76,7 @@ const signIn = catchError(async (req, res, next) => {
 
       res.status(200).json({
         message: "Login successful",
-        token,
-        email: user.email,
+        token
       });
     }
   );
