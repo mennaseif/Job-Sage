@@ -289,12 +289,12 @@ const resetPassword = catchError(async (req, res, next) => {
   let decoded;
   try {
     decoded = jwt.verify(token, process.env.JWT_KEY_SIGN_TOKEN);
-    console.log("Decoded token payload:", decoded);
+    
   } catch (error) {
     return res.status(400).json({ message: "Invalid or expired token" });
   }
 
-  const user = await User.findById(decoded._id);
+  const user = await User.findById(decoded.userId);
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
