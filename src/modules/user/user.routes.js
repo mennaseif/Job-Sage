@@ -12,6 +12,7 @@ import {
 } from "../user/user.controller.js";
 import {
   changeUserPasswordValidSchema,
+  resetPasswordValidSchema,
   signInValidSchema,
   signUpValidSchema,
   updateUserValidSchema,
@@ -28,7 +29,7 @@ userRoutes.post("/signup", validate(signUpValidSchema), checkEmail, signUp);
 userRoutes.post("/signin", validate(signInValidSchema), signIn);
 userRoutes.post("/reqest-password-reset", requestPasswordReset);
 userRoutes.post("/verifyotp", verifyOTP);
-userRoutes.post("/reset-password", resetPassword);
+userRoutes.post("/reset-password",validate(resetPasswordValidSchema), resetPassword);
 
 
 userRoutes.put( "/update",validate(updateUserValidSchema),protectedRoutes,updateAccount);

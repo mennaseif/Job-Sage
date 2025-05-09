@@ -30,6 +30,15 @@ const changeUserPasswordValidSchema = Joi.object({
     .required(),
 });
 
+const resetPasswordValidSchema = Joi.object({
+  newPassword: Joi.string()
+    .pattern(/^[A-Z][A-Za-z0-9]{8,40}$/)
+    .required(),
+  confirmNewPassword: Joi.string()
+    .pattern(/^[A-Z][A-Za-z0-9]{8,40}$/)
+    .required(),
+});
+
 const updateUserValidSchema = Joi.object({
   name: Joi.string().min(2).max(1000),
   email: Joi.string().min(2).max(2000),
@@ -42,4 +51,5 @@ export {
   signInValidSchema,
   changeUserPasswordValidSchema,
   updateUserValidSchema,
+  resetPasswordValidSchema
 };
